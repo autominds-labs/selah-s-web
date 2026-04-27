@@ -1,16 +1,44 @@
-export default function Footer({ brand }: { brand: { area: string } }) {
+export default function Footer({
+  brand,
+}: {
+  brand: {
+    area: string;
+  };
+}) {
+  const phoneDisplay = "0707 455 964";
+  const whatsappE164 = "256707455964";
+
   return (
-    <footer className="mt-10 border-t border-white/20 bg-black/40 backdrop-blur-2xl">
-      <div className="mx-auto max-w-6xl px-4 py-10 flex flex-col md:flex-row items-center justify-between gap-4 text-white/70">
-        <div className="font-semibold text-white">Selah&apos;s</div>
-        <div className="text-xs flex gap-4 flex-wrap justify-center">
+    <footer className="site-footer">
+      <div className="footer-inner">
+        <div className="footer-logo logo">
+          <div className="logo-name">
+            <span className="ls">S</span>elah&apos;s
+          </div>
+          <div className="logo-tag">Dry Cleaners &amp; Laundry</div>
+        </div>
+
+        <nav className="footer-links" aria-label="Footer navigation">
           <a href="#home">Home</a>
           <a href="#services">Services</a>
           <a href="#pricing">Pricing</a>
-          <a href="#track">Track</a>
+          <a href="#track">Track Order</a>
           <a href="#contact">Contact</a>
+          <a href="#book">Book Pickup</a>
+        </nav>
+
+        <div className="footer-contact">
+          <a
+            href={`https://wa.me/${whatsappE164}?text=${encodeURIComponent(
+              "Hello Selah's, I would like to book a laundry pickup."
+            )}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            WhatsApp: {phoneDisplay}
+          </a>
+          <p>© 2026 Selah&apos;s · {brand.area}</p>
         </div>
-        <div className="text-xs">© 2026 Selah&apos;s · {brand.area}</div>
       </div>
     </footer>
   );

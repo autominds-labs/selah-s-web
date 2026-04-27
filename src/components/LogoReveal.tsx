@@ -1,55 +1,102 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 export default function LogoReveal() {
   const [show, setShow] = useState(true);
 
   useEffect(() => {
-    const t = setTimeout(() => setShow(false), 1450);
-    return () => clearTimeout(t);
+    const timer = window.setTimeout(() => setShow(false), 2300);
+    return () => window.clearTimeout(timer);
   }, []);
 
   return (
     <AnimatePresence>
       {show && (
         <motion.div
-          className="fixed inset-0 z-[100] grid place-items-center"
+          className="selah-intro"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          style={{
-            background:
-              "radial-gradient(800px 500px at 50% 40%, rgba(72,214,220,0.18), transparent 60%), rgb(8 12 18)",
-          }}
+          exit={{ opacity: 0, transition: { duration: 0.45 } }}
         >
           <motion.div
-            className="glass rounded-[2.2rem] px-8 py-7 flex items-center gap-4"
-            initial={{ scale: 0.92, y: 10, opacity: 0 }}
+            className="intro-bubble intro-bubble-one"
+            animate={{ y: [-8, -30, -8], opacity: [0.35, 0.9, 0.35] }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="intro-bubble intro-bubble-two"
+            animate={{ y: [0, -26, 0], opacity: [0.28, 0.8, 0.28] }}
+            transition={{ duration: 2.1, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
+          />
+          <motion.div
+            className="intro-bubble intro-bubble-three"
+            animate={{ y: [-4, -24, -4], opacity: [0.2, 0.7, 0.2] }}
+            transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut", delay: 0.35 }}
+          />
+
+          <motion.div
+            className="intro-card"
+            initial={{ scale: 0.92, y: 18, opacity: 0 }}
             animate={{ scale: 1, y: 0, opacity: 1 }}
-            exit={{ scale: 0.98, y: -8, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 240, damping: 20 }}
+            exit={{ scale: 0.96, y: -14, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 230, damping: 22 }}
           >
-            <div className="relative h-14 w-14 overflow-hidden rounded-3xl border border-white/10 bg-white/5">
-              <Image src="/logo.png" alt="Selah's logo" fill className="object-cover" priority />
+            <div className="intro-logo">
+              <div className="intro-logo-name">
+                <span>S</span>elah&apos;s
+              </div>
+              <div className="intro-logo-tag">Dry Cleaners &amp; Laundry</div>
             </div>
 
-            <div className="leading-tight">
-              <div className="text-lg font-semibold text-white">Selah&apos;s</div>
-              <div className="text-sm subtle">Dry Cleaners & Laundry</div>
+            <div className="intro-machine" aria-hidden="true">
+              <div className="intro-machine-top">
+                <div className="intro-machine-slot" />
+                <div className="intro-machine-dots">
+                  <i />
+                  <i />
+                  <i />
+                </div>
+              </div>
+
+              <div className="intro-machine-window">
+                <motion.div
+                  className="intro-water"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1.85, repeat: Infinity, ease: "linear" }}
+                >
+                  <span />
+                  <span />
+                  <span />
+                </motion.div>
+              </div>
+
+              <motion.div
+                className="intro-shirt"
+                animate={{ y: [0, -5, 0], rotate: [-2, 2, -2] }}
+                transition={{ duration: 1.7, repeat: Infinity, ease: "easeInOut" }}
+              >
+                ✦
+              </motion.div>
             </div>
 
-            <motion.div
-              className="ml-3 h-2 w-24 rounded-full"
-              initial={{ opacity: 0.4 }}
-              animate={{ opacity: 1 }}
-              style={{
-                background:
-                  "linear-gradient(90deg, rgba(72,214,220,0.2), rgba(72,214,220,0.9), rgba(125,220,226,0.2))",
-              }}
-            />
+            <div className="intro-copy">
+              <h1>
+                Preparing your
+                <br />
+                <em>fresh experience.</em>
+              </h1>
+              <p>Pickup. Clean. Press. Deliver.</p>
+            </div>
+
+            <div className="intro-progress">
+              <motion.span
+                initial={{ x: "-100%" }}
+                animate={{ x: "165%" }}
+                transition={{ duration: 1.45, repeat: Infinity, ease: "easeInOut" }}
+              />
+            </div>
           </motion.div>
         </motion.div>
       )}

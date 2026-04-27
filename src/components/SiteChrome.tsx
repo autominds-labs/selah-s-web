@@ -2,8 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-const WHATSAPP_E164 = "256700000000"; // change later
-const WHATSAPP_DISPLAY = "0700 000 000"; // change later
+const WHATSAPP_E164 = "256707455964";
+const BOOKING_MESSAGE =
+  "Hello Selah's Dry Cleaning, I would like to book a laundry pickup.";
+
+const WHATSAPP_BOOKING_URL = `https://wa.me/${WHATSAPP_E164}?text=${encodeURIComponent(
+  BOOKING_MESSAGE
+)}`;
 
 export default function SiteChrome() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -21,66 +26,59 @@ export default function SiteChrome() {
   );
 
   useEffect(() => {
-    const onScroll = () => setSolid(window.scrollY > 30);
+    const onScroll = () => setSolid(window.scrollY > 24);
+
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
+
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? "hidden" : "";
+
     return () => {
       document.body.style.overflow = "";
     };
   }, [drawerOpen]);
 
-  // Reveal animations (your IntersectionObserver)
   useEffect(() => {
+    const elements = document.querySelectorAll(".rv,.rv-l,.rv-r");
+
     const io = new IntersectionObserver(
       (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("in");
-            io.unobserve(e.target);
-          }
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+
+          entry.target.classList.add("in");
+          io.unobserve(entry.target);
         });
       },
-      { threshold: 0.1 }
+      {
+        threshold: 0.12,
+        rootMargin: "0px 0px -40px 0px",
+      }
     );
 
-    document.querySelectorAll(".rv,.rv-l,.rv-r").forEach((el) => io.observe(el));
+    elements.forEach((el) => io.observe(el));
+
     return () => io.disconnect();
   }, []);
 
   const closeDrawer = () => setDrawerOpen(false);
-  const openDrawer = () => setDrawerOpen(true);
+  const toggleDrawer = () => setDrawerOpen((value) => !value);
 
   return (
     <>
-      {/* Skip link */}
-      <a
-        href="#main-content"
-        style={{
-          position: "absolute",
-          top: "-100px",
-          left: "1rem",
-          zIndex: 9999,
-          padding: ".5rem 1rem",
-          background: "var(--blue)",
-          color: "#fff",
-          borderRadius: ".5rem",
-          fontWeight: 700,
-          transition: "top .2s",
-        }}
-        onFocus={(e) => ((e.currentTarget.style.top as any) = "1rem")}
-        onBlur={(e) => ((e.currentTarget.style.top as any) = "-100px")}
-      >
+      <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
 
-      {/* NAV */}
-      <nav className={`nav ${solid ? "solid" : ""}`} aria-label="Main navigation" role="navigation">
-        <a href="#home" aria-label="Selah's Home">
+      <nav
+        className={`nav ${solid ? "solid" : ""}`}
+        aria-label="Main navigation"
+      >
+        <a href="#home" aria-label="Go to Selah's homepage" className="nav-logo-link">
           <div className="logo">
             <div className="logo-name">
               <span className="ls">S</span>elah&apos;s
@@ -92,15 +90,15 @@ export default function SiteChrome() {
         <div className="nav-space" />
 
         <div className="nav-links">
-          {links.map((l) => (
-            <a key={l.href} href={l.href}>
-              {l.label}
+          {links.map((link) => (
+            <a key={link.href} href={link.href}>
+              {link.label}
             </a>
           ))}
         </div>
 
         <a href="#book" className="nav-cta">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             <path
               d="M3 7h11v10H3V7Zm11 3h4l3 3v4h-7v-7Z"
               stroke="currentColor"
@@ -114,9 +112,11 @@ export default function SiteChrome() {
         </a>
 
         <button
+          type="button"
           className={`hamburger ${drawerOpen ? "open" : ""}`}
-          aria-label="Menu"
-          onClick={drawerOpen ? closeDrawer : openDrawer}
+          aria-label={drawerOpen ? "Close menu" : "Open menu"}
+          aria-expanded={drawerOpen}
+          onClick={toggleDrawer}
         >
           <span className="bar" />
           <span className="bar" />
@@ -124,31 +124,50 @@ export default function SiteChrome() {
         </button>
       </nav>
 
-      {/* DRAWER */}
       <div className={`drawer ${drawerOpen ? "open" : ""}`} aria-hidden={!drawerOpen}>
-        <div className="drawer-bg" onClick={closeDrawer} />
-        <div className="drawer-panel">
+        <button
+          type="button"
+          className="drawer-bg"
+          aria-label="Close menu overlay"
+          onClick={closeDrawer}
+        />
+
+        <aside className="drawer-panel" aria-label="Mobile navigation menu">
           <div className="drawer-top">
-            <div className="logo" style={{ ["--ln" as any]: "1.28rem", ["--lt" as any]: ".43rem" }}>
+            <div
+              className="logo"
+              style={
+                {
+                  "--ln": "1.28rem",
+                  "--lt": ".43rem",
+                } as React.CSSProperties
+              }
+            >
               <div className="logo-name">
                 <span className="ls">S</span>elah&apos;s
               </div>
               <div className="logo-tag">Dry Cleaners &amp; Laundry</div>
             </div>
-            <button className="drawer-close" onClick={closeDrawer} aria-label="Close menu">
+
+            <button
+              type="button"
+              className="drawer-close"
+              onClick={closeDrawer}
+              aria-label="Close menu"
+            >
               ✕
             </button>
           </div>
 
-          <nav className="drawer-nav">
-            {links.map((l, idx) => (
+          <nav className="drawer-nav" aria-label="Mobile links">
+            {links.map((link, index) => (
               <a
-                key={l.href}
-                href={l.href}
-                className={`dl ${idx === 0 ? "act" : ""}`}
+                key={link.href}
+                href={link.href}
+                className={`dl ${index === 0 ? "act" : ""}`}
                 onClick={closeDrawer}
               >
-                {l.label}
+                {link.label}
               </a>
             ))}
           </nav>
@@ -157,44 +176,40 @@ export default function SiteChrome() {
             <a href="#book" onClick={closeDrawer}>
               Book Pickup Now
             </a>
-            <p>Ntinda · Kisaasi, Kampala</p>
+            <p>Ntinda · Kisaasi · Kampala</p>
           </div>
-        </div>
+        </aside>
       </div>
 
-      {/* WA floating bubble */}
       <a
-        href={`https://wa.me/${WHATSAPP_E164}`}
+        href={WHATSAPP_BOOKING_URL}
         target="_blank"
         className="wa-fab"
-        aria-label="Chat on WhatsApp"
+        aria-label="Chat with Selah's on WhatsApp"
         rel="noreferrer"
       >
-        <svg width="25" height="25" viewBox="0 0 24 24" fill="white">
+        <svg width="25" height="25" viewBox="0 0 24 24" fill="white" aria-hidden="true">
           <path d="M20.52 3.48A11.86 11.86 0 0 0 12.01 0C5.39 0 .01 5.38.01 12c0 2.1.55 4.16 1.6 5.98L0 24l6.2-1.6A11.94 11.94 0 0 0 12.01 24C18.63 24 24 18.62 24 12c0-3.2-1.25-6.2-3.48-8.52Z" />
         </svg>
       </a>
 
-      {/* Mobile bar */}
       <div className="mob-bar">
         <a
-          href={`https://wa.me/${WHATSAPP_E164}`}
+          href={WHATSAPP_BOOKING_URL}
           target="_blank"
           className="btn mob-wa"
           rel="noreferrer"
         >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="white">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="white" aria-hidden="true">
             <path d="M20.52 3.48A11.86 11.86 0 0 0 12.01 0C5.39 0 .01 5.38.01 12c0 2.1.55 4.16 1.6 5.98L0 24l6.2-1.6A11.94 11.94 0 0 0 12.01 24C18.63 24 24 18.62 24 12c0-3.2-1.25-6.2-3.48-8.52Z" />
           </svg>
           WhatsApp
         </a>
+
         <a href="#book" className="btn btn-turq">
           Book Pickup
         </a>
       </div>
-
-      {/* WhatsApp chip number (for Why section) */}
-      <style>{`:root{--waDisplay:"${WHATSAPP_DISPLAY}";}`}</style>
     </>
   );
 }
